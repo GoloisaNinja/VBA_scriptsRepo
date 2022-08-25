@@ -1,0 +1,389 @@
+Sub GPMain()
+
+Dim Result As Integer
+
+Result = MsgBox("Are you sure Sheet2 is ready? Hit Ok to proceed.", vbOKCancel, "Definitely Ready?")
+
+If Result = 1 Then
+
+Application.ScreenUpdating = False
+
+Dim wb As Workbook
+
+Set wb = ThisWorkbook
+
+Dim ws As Worksheet
+
+Set ws = Sheets(2)
+
+Dim i As Integer, v As Integer
+
+Dim mapE As String, mapF As String, mapG As String, mapH As String, mapI As String, mapZ As String, _
+
+                                    mapP As String, mapQ As String, mapR As String, mapS As String, _
+
+                                    mapT As String, mapU As String, mapV As String, mapAI As String, _
+
+                                    mapAD As String
+
+Dim mapY As Long, mapAC As Long, mapAL As Long
+
+Dim mapAA As Date
+
+Dim mapAO As Currency, mapAP As Currency, mapAS As Currency
+
+Dim lastRow As Integer
+
+lastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+ 
+
+Dim BillBackLineItems As New Collection
+
+ 
+
+For i = 2 To lastRow
+
+    'get the values from each row cell that is needed to build object
+
+    mapE = ws.Range("E" & i).Value
+
+    mapF = ws.Range("F" & i).Value
+
+    mapG = ws.Range("G" & i).Value
+
+    mapH = ws.Range("H" & i).Value
+
+    mapI = ws.Range("I" & i).Value
+
+    mapZ = ws.Range("Z" & i).Value
+
+    mapP = ws.Range("P" & i).Value
+
+    mapQ = ws.Range("Q" & i).Value
+
+    mapR = ws.Range("R" & i).Value
+
+    mapS = ws.Range("S" & i).Value
+
+    mapT = ws.Range("T" & i).Value
+
+    mapU = ws.Range("U" & i).Value
+
+    mapV = ws.Range("V" & i).Value
+
+    mapY = ws.Range("Y" & i).Value
+
+    mapAA = ws.Range("AA" & i).Value
+
+    mapAC = ws.Range("AC" & i).Value
+
+    mapAI = ws.Range("AI" & i).Value
+
+    mapAD = ws.Range("AD" & i).Value
+
+    mapAL = ws.Range("AL" & i).Value
+
+    mapAO = ws.Range("AO" & i).Value
+
+    mapAP = ws.Range("AP" & i).Value
+
+    mapAS = ws.Range("AS" & i).Value
+
+    'create the class/object instance passing values to constructor function
+
+    Dim Inst As GPLineItem
+
+    Set Inst = CreateGPInstance(mapE, mapF, mapG, mapH, mapI, mapZ, mapP, mapQ, _
+
+                                mapR, mapS, mapT, mapU, mapV, mapY, mapAA, mapAC, _
+
+                                mapAI, mapAD, mapAL, mapAO, mapAP, mapAS)
+
+    'add newly instantiated/populated object class into the collection
+
+    BillBackLineItems.Add item:=Inst, Key:=CStr(i)
+
+Next i
+
+ 
+
+'Empty the sheet
+
+ 
+
+Debug.Print BillBackLineItems.Count
+
+ 
+
+ws.Cells.Clear
+
+ 
+
+'Setting the headers
+
+ws.Range("A1").Value = "HDR RCD TYP"
+
+ws.Range("B1").Value = "REV MAJOR"
+
+ws.Range("C1").Value = "REV MINOR"
+
+ws.Range("D1").Value = "GP DID#"
+
+ws.Range("E1").Value = "DUNS"
+
+ws.Range("F1").Value = "DIST NAME"
+
+ws.Range("G1").Value = "DIST ADDR 1"
+
+ws.Range("H1").Value = "DIST ADDR 2"
+
+ws.Range("I1").Value = "DIST CITY"
+
+ws.Range("J1").Value = "DIST STATE"
+
+ws.Range("K1").Value = "DIST ZIP"
+
+ws.Range("L1").Value = "PROGRAM"
+
+ws.Range("M1").Value = "RPT PERIOD FR DATE"
+
+ws.Range("N1").Value = "RPT PERIOD TO DATE"
+
+ws.Range("O1").Value = "DEBIT MEMO"
+
+ws.Range("P1").Value = "EXPT REBATE"
+
+ws.Range("Q1").Value = "EXPT CASE"
+
+ws.Range("R1").Value = "LINE ITEMS"
+
+ws.Range("S1").Value = "ORG CL#"
+
+ws.Range("T1").Value = "DETAIL REC TYPE"
+
+ws.Range("U1").Value = "USER LOC ID"
+
+ws.Range("V1").Value = "USER NAME"
+
+ws.Range("W1").Value = "USER ADD1"
+
+ws.Range("X1").Value = "USER ADD2"
+
+ws.Range("Y1").Value = "USER ADD3"
+
+ws.Range("Z1").Value = "USER CITY"
+
+ws.Range("AA1").Value = "USER STATE"
+
+ws.Range("AB1").Value = "USER ZIP"
+
+ws.Range("AC1").Value = "USER PHONE"
+
+ws.Range("AD1").Value = "INVOICE NUMBER"
+
+ws.Range("AE1").Value = "INVOICE DATE"
+
+ws.Range("AF1").Value = "INVOICE LINE NUM"
+
+ws.Range("AG1").Value = "GP SKU"
+
+ws.Range("AH1").Value = "DIST SKU"
+
+ws.Range("AI1").Value = "UOM"
+
+ws.Range("AJ1").Value = "PRICE DEVIATION #"
+
+ws.Range("AK1").Value = "PRICE DEVIATION NAME"
+
+ws.Range("AL1").Value = "QTY"
+
+ws.Range("AM1").Value = "FROM PRICE"
+
+ws.Range("AN1").Value = "PA PRICE"
+
+ws.Range("AO1").Value = "REBT/CASE"
+
+ws.Range("AP1").Value = "EXTENDED REBATE"
+
+ws.Range("AQ1").Value = "COMMENTS"
+
+ 
+
+'Regenerate cell data from GPListItem Object instances that contain data
+
+'use static/empty data where Scott L. has indicated that no mapping exists
+
+ 
+
+For v = 2 To BillBackLineItems.Count + 1
+
+    Dim LineItem As GPLineItem
+
+    Set LineItem = BillBackLineItems.item(CStr(v))
+
+    ws.Range("A" & v).Value = 1
+
+    ws.Range("B" & v).Value = 1
+
+    ws.Range("C" & v).Value = 3
+
+    ws.Range("F" & v).Value = LineItem.getDName
+
+    ws.Range("G" & v).Value = LineItem.getDAdd1
+
+    ws.Range("I" & v).Value = LineItem.getDCity
+
+    ws.Range("J" & v).Value = LineItem.getDState
+
+    ws.Range("K" & v).Value = LineItem.getDZip
+
+    ws.Range("L" & v).Value = 1
+
+    ws.Range("O" & v).Value = LineItem.getDebitMemoNum
+
+    ws.Range("T" & v).Value = 2
+
+    ws.Range("U" & v).Value = LineItem.getEULoc
+
+    ws.Range("V" & v).Value = LineItem.getEULocName
+
+    ws.Range("W" & v).Value = LineItem.getEUAdd1
+
+    ws.Range("X" & v).Value = LineItem.getEUAdd2
+
+    ws.Range("Z" & v).Value = LineItem.getEUCity
+
+    ws.Range("AA" & v).Value = LineItem.getEUState
+
+    ws.Range("AB" & v).Value = LineItem.getEUZip
+
+    ws.Range("AD" & v).Value = LineItem.getInvoiceNum
+
+    ws.Range("AE" & v).Value = LineItem.getInvoiceDate
+
+    ws.Range("AF" & v).Value = LineItem.getInvoiceLineItem
+
+    ws.Range("AG" & v).Value = LineItem.getGPSku
+
+    ws.Range("AH" & v).Value = LineItem.getDItemNum
+
+    ws.Range("AI" & v).Value = "CS"
+
+    ws.Range("AL" & v).Value = LineItem.getNumCases
+
+    ws.Range("AN" & v).Value = LineItem.getToPrice
+
+    ws.Range("AO" & v).Value = LineItem.getRebate
+
+    ws.Range("AP" & v).Value = LineItem.getExtendedRebate
+
+Next v
+
+ 
+
+'Resize the cells
+
+ws.UsedRange.EntireColumn.AutoFit
+
+Application.ScreenUpdating = True
+
+'Lets get weird
+
+Dim message As String
+
+message = SayGoodBye
+
+ 
+
+MsgBox message, vbOKOnly, "GPMain is Complete!"
+
+ 
+
+Else: MsgBox "Phew! That was close - powering down Warp Engines...", vbOKOnly, "Realigning Dilithium Crystals"
+
+End If
+
+End Sub
+
+ 
+
+Public Function CreateGPInstance(a As String, b As String, c As String, d As String, _
+
+                                e As String, f As String, g As String, h As String, _
+
+                                ii As String, j As String, k As String, l As String, _
+
+                                m As String, n As Long, o As Date, p As Long, _
+
+                                q As String, r As String, s As Long, t As Currency, _
+
+                                u As Currency, vv As Currency) As GPLineItem
+
+    Set CreateGPInstance = New GPLineItem
+
+    CreateGPInstance.InitiateClassFields dName:=a, dAdd1:=b, dCity:=c, dState:=d, _
+
+                                        dZip:=e, debitMemoNum:=f, euLoc:=g, euLocName:=h, _
+
+                                        euAdd1:=ii, euAdd2:=j, euCity:=k, euState:=l, _
+
+                                        euZip:=m, invoiceNum:=n, invoiceDate:=o, _
+
+                                        invoiceLineItem:=p, gpSku:=q, dItemNum:=r, _
+
+                                        numCases:=s, toPrice:=t, rebate:=u, extendedRebate:=vv
+
+End Function
+
+ 
+
+ 
+
+Public Function SayGoodBye()
+
+    Dim myRand As Integer
+
+    Dim arrLength As Integer
+
+    Dim sayingArray() As String: sayingArray = Split("You know something? You're pretty awesome!," & _
+
+                                                    "I like what you did just now - super BillBacky.," & _
+
+                                                    "Guess what has 2 thumbs and just finished a billback? Wait...do you have thumbs?," & _
+
+                                                    "Ever see a dinosaur complete a billback? Me either - guess they didn't know how to fossiliate it.," & _
+
+                                                    "Are there TikToks about how to make TikToks? And if so - should you TikTok yourself TikTokking how to TikTok?," & _
+
+                                                    "Be honest - this is waaaaay better than Fortnite ammiright??," & _
+
+                                                    "I lost a TrapperKeeper in 4th Grade and I've always wondered if it's still keeping my stuff.," & _
+
+                                                    "The answer to your question is yes - there IS an adorable life-size Darth Vader Strawberry Shortcake Doll on Etsy.," & _
+
+                                                    "If you haven't listened to NASA's audio of a black hole - you should really be happy about that. It's terrifying.," & _
+
+                                                    "Congrats on doing the thing and passing the other thing and also getting the thing from the other thing's thing under control!," & _
+
+                                                    "Can you imagine how many terabytes of Facebook are literally just pics of pumpkin spice lattes?," & _
+
+                                                    "Believe it or not - there was a time before Tom Holland. I know. It's like whaaaaat.," & _
+
+                                                    "Do they still make pencils? I mean - I really don't think they make pencils anymore...," & _
+
+                                                    "I'm not sure why you're doing billbacks when we need to solve how Jennifer Aniston hasn't aged.," & _
+
+                                                    "Wouldn't it be weird if I was standing right behind you? I mean - I'm not. Because that would be super creepy.," & _
+
+                                                    "My mom told me about the time she saved 5k to buy a house. I just spent 5k at Whole Foods and I forgot Almond Milk.", ",")
+
+    arrLength = UBound(sayingArray)
+
+    myRand = WorksheetFunction.RandBetween(0, arrLength)
+
+    SayGoodBye = sayingArray(myRand)
+
+                                                    
+
+End Function
